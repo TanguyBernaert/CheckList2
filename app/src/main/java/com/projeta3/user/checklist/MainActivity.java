@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements PropertyChangeLis
        }
    }
    );
-
         connectionJSon = new ConnectionJson();
         connectionJSon.execute("http://liste.ega.tf/product/");
         connectionJSon.addPropertyChangeListener(this);

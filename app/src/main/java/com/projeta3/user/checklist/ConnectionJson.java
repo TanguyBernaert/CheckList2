@@ -18,7 +18,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import static org.json.JSONObject.NULL;
 
 public class ConnectionJson extends AsyncTask<String, Void, String> {
     private PropertyChangeSupport ptChSupport = new PropertyChangeSupport(this);
@@ -26,18 +25,29 @@ public class ConnectionJson extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... strings) {
-        try
-        {
+        try {
             JSONObject json = new JSONObject();
-            Log.d("RETOUR ", get(strings[0],"UPD",json));
+           /* json.put("typeObj","product");
+            json.put("id",1);
+            json.put("name","Pomme de terre");
+            json.put("type","Legume");
+            json.put("price",3.2);*/
 
-            ptChSupport.firePropertyChange("GET-ALL", NULL , parse(get(strings[0],"ALL",json)));
+            //Log.v("RETOUR ", get(strings[0],"DEL",json));
+
+            Log.v("RETOUR ", get(strings[0],"UPD",json));
+
+            // Log.v("RETOUR ", get(strings[0],"ADD",json));
+
+            ptChSupport.firePropertyChange("GET-ALL", null, parse(get(strings[0],"ALL",json)));
             List<Product> listProduct = parse(get(strings[0],"ALL",json));
             for (int i=0;i<listProduct.size();i++){
-                Log.d("PRODUIT ", listProduct.get(i).name()+" "+listProduct.get(i).id()+"\n");
+                Log.v("PRODUIT ", listProduct.get(i).name()+" "+listProduct.get(i).id()+"\n");
             }
-        }
-        catch (IOException e) {
+
+
+
+        } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -47,9 +57,8 @@ public class ConnectionJson extends AsyncTask<String, Void, String> {
     }
 
     public String get(String url, String commande, JSONObject pdt) throws IOException, JSONException {
-
         InputStream is = null;
-
+        try {
             /*json.put("pdt", pdt);
             Log.v("RETOUR ",URLEncoder.encode(pdt.toString(), "utf-8"));
          /*   final HttpURLConnection conn = (HttpURLConnection)
@@ -59,32 +68,27 @@ public class ConnectionJson extends AsyncTask<String, Void, String> {
             conn.setConnectTimeout(15000 /* milliseconds */);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
-            Log.e("TEST",conn.toString());
 
-        // Starts the query
+            // Starts the query
             conn.connect();
             is = conn.getInputStream();
             // Read the InputStream and save it in a string
-
-
+            return readIt(is);
+        } finally {
             // Makes sure that the InputStream is closed after the app is
             // finished using it.
-            if (is != NULL) {
+            if (is != null) {
                 is.close();
             }
-        return readIt(is);
+        }
     }
 
     private String readIt(InputStream is) throws IOException {
         BufferedReader r = new BufferedReader(new InputStreamReader(is));
         StringBuilder response = new StringBuilder();
         String line;
-        Log.e("TEST",Integer.toString(r.read()));
         while ((line = r.readLine()) != null) {
             response.append(line).append('\n');
-            if (!r.ready()) {
-                break;
-            }
         }
         return response.toString();
     }
