@@ -1,6 +1,7 @@
 package com.projeta3.user.checklist;
 
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -35,7 +36,7 @@ public class ConnectionJson extends AsyncTask<String, Void, String> {
 
             //Log.v("RETOUR ", get(strings[0],"DEL",json));
 
-            Log.v("RETOUR ", get(strings[0],"UPD",json));
+            //Log.v("RETOUR ", get(strings[0],"UPD",json));
 
             // Log.v("RETOUR ", get(strings[0],"ADD",json));
 
@@ -44,7 +45,6 @@ public class ConnectionJson extends AsyncTask<String, Void, String> {
             for (int i=0;i<listProduct.size();i++){
                 Log.v("PRODUIT ", listProduct.get(i).name()+" "+listProduct.get(i).id()+"\n");
             }
-
 
 
         } catch (IOException e) {
@@ -68,7 +68,6 @@ public class ConnectionJson extends AsyncTask<String, Void, String> {
             conn.setConnectTimeout(15000 /* milliseconds */);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
-
             // Starts the query
             conn.connect();
             is = conn.getInputStream();

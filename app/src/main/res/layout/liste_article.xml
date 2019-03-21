@@ -11,11 +11,13 @@
             android:padding="10dp"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="16sp"
+            android:layout_gravity="center_horizontal"
             android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_gravity="center_horizontal"
             android:background="@color/colorPrimary" />
 
     </LinearLayout>

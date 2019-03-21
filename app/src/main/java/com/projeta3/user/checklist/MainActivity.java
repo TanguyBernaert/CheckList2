@@ -2,7 +2,6 @@ package com.projeta3.user.checklist;
 
 
 import android.graphics.Bitmap;
-import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,7 +28,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements PropertyChangeListener, AdapterView.OnItemClickListener
+public class MainActivity extends AppCompatActivity implements PropertyChangeListener, AdapterView.OnItemClickListener, View.OnClickListener
 
 {
     private TextView mWelcome;
@@ -45,57 +44,33 @@ public class MainActivity extends AppCompatActivity implements PropertyChangeLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        connectionJSon = new ConnectionJson();
+        connectionJSon.execute("http://liste.ega.tf/product/");
+        connectionJSon.addPropertyChangeListener(this);
         mWelcome = findViewById(R.id.activity_main_texte_bienvenue); //on fait le lien entre le fichier xml et le Java via les ID
         mListe = findViewById(R.id.activity_main_liste);
         mValidation = findViewById(R.id.activity_main_boutton_validation);
         mQRCode = findViewById(R.id.activity_main_qrCodeImage);
         mRecherche = findViewById(R.id.autoCompleteTextView);
 
-        mValidation.setEnabled(false); //Le bouton de validation est désactivé
+        mValidation.setEnabled(false);
 
         mListe.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
-
             {
                 mValidation.setEnabled(s.toString().length() != 0); //Une fois que l'utilisateur a rentré une lettre dans le champ, le boutton s'active
             }
-
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
 
-        mValidation.setOnClickListener(new View.OnClickListener() // On affiche le QR code qui correspond au texte rentré par l'utilisateur
-           {
-               @Override
-               public void onClick(View view) {
-           String text = mListe.getText().toString().trim();
-           // Identifier les textes aux ID et coder les ID dns le QR code
-           // separer les ID par des virgules et tout mettre sur une seule ligne
+        mValidation.setOnClickListener(this);
 
-           if (text != null) {
-               MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-               try {
-                   BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 850, 850);
-                   BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                   Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-                   mQRCode.setImageBitmap(bitmap);
-               } catch (WriterException e)
-               {
-                   e.printStackTrace();
-               }
-           }
-       }
-   }
-   );
-        connectionJSon = new ConnectionJson();
-        connectionJSon.execute("http://liste.ega.tf/product/");
-        connectionJSon.addPropertyChangeListener(this);
     }
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -133,5 +108,24 @@ public class MainActivity extends AppCompatActivity implements PropertyChangeLis
         }
         mListe.setText(monTexte + listProducts.get((int) id).name() +",");
         mRecherche.setText("");
+    }
+
+    @Override
+    public void onClick(View view) {
+        String text = mListe.getText().toString().trim();
+        // Identifier les textes aux ID et coder les ID dns le QR code
+        // separer les ID par des virgules et tout mettre sur une seule ligne
+
+        if (text != null) {
+            MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+            try {
+                BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 850, 850);
+                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                mQRCode.setImageBitmap(bitmap);
+            } catch (WriterException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
